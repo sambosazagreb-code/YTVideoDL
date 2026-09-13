@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Ultra Studio Web - Localhost Edition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <!-- Interactive Canvas Particle & Audio Spectrum -->
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24" class="yt-icon"><path fill="currentColor" d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
+        </div>
+        <div class="brand-text">
+          <h1>YouTube Ultra Studio</h1>
+          <span class="badge">LOCAL NODE.JS ENGINE</span>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="theme-switcher">
+          <button class="theme-pill active" data-theme="theme-dark">YouTube Dark</button>
+          <button class="theme-pill" data-theme="theme-cyberpunk">Cyberpunk</button>
+          <button class="theme-pill" data-theme="theme-matrix">Matrix</button>
+          <button class="theme-pill" data-theme="theme-blood">AMOLED Red</button>
+        </div>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span id="engineStatus">Engine Online</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="tab-downloader">
+        <span class="tab-icon">📥</span> Studio Downloader
+      </button>
+      <button class="tab-btn" data-tab="tab-player">
+        <span class="tab-icon">🎬</span> YTMedia Player & Library
+      </button>
+      <button class="tab-btn" data-tab="tab-matrix">
+        <span class="tab-icon">🎛️</span> 10,000 Preset Matrix
+      </button>
+      <button class="tab-btn" data-tab="tab-terminal">
+        <span class="tab-icon">💻</span> Live Terminal
+      </button>
+    </nav>
+
+    <!-- TAB 1: DOWNLOADER -->
+    <section id="tab-downloader" class="tab-content active">
+      <div class="glass-card main-card">
+        <div class="input-group">
+          <label for="urlInput">YOUTUBE MEDIA / CHANNEL / PLAYLIST URL</label>
+          <div class="search-bar">
+            <input type="text" id="urlInput" placeholder="https://www.youtube.com/watch?v=... or https://youtube.com/@Channel">
+            <button id="btnPaste" class="action-btn secondary">📋 Paste</button>
+            <button id="btnClear" class="action-btn secondary">✕ Clear</button>
+          </div>
+        </div>
+
+        <div class="mode-selector">
+          <button class="mode-card active" data-mode="single">
+            <div class="mode-icon">📹</div>
+            <div class="mode-info">
+              <h3>Single Video</h3>
+              <p>Highest quality up to 4K/8K 60FPS</p>
+            </div>
+          </button>
+          <button class="mode-card" data-mode="channel">
+            <div class="mode-icon">👑</div>
+            <div class="mode-info">
+              <h3>Full Channel Catalog</h3>
+              <p>Download every video ever created</p>
+            </div>
+          </button>
+          <button class="mode-card" data-mode="playlist">
+            <div class="mode-icon">📑</div>
+            <div class="mode-info">
+              <h3>Playlist Grabber</h3>
+              <p>Indexed track numbering (001, 002...)</p>
+            </div>
+          </button>
+          <button class="mode-card" data-mode="audio">
+            <div class="mode-icon">🎵</div>
+            <div class="mode-info">
+              <h3>Master Audio Studio</h3>
+              <p>MP3, FLAC Lossless, WAV, OPUS</p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Dynamic Options Panel -->
+        <div class="options-grid">
+          <div class="option-box" id="boxQuality">
+            <label>Video Resolution</label>
+            <select id="selQuality">
+              <option value="best">Best Available (4K / 8K 60fps)</option>
+              <option value="1080p">1080p Full HD</option>
+              <option value="720p">720p HD</option>
+              <option value="480p">480p Standard</option>
+            </select>
+          </div>
+
+          <div class="option-box hidden" id="boxAudio">
+            <label>Audio Format</label>
+            <select id="selAudioFmt">
+              <option value="mp3">MP3 320kbps High-Res</option>
+              <option value="flac">FLAC Lossless Studio Master</option>
+              <option value="wav">WAV Uncompressed PCM</option>
+              <option value="m4a">M4A Apple High-Quality</option>
+              <option value="opus">OPUS Ultra-Low Latency</option>
+            </select>
+          </div>
+
+          <div class="option-box hidden" id="boxChannel">
+            <label>Max Videos (0 = Entire Channel)</label>
+            <input type="number" id="inpMaxVids" value="0" min="0">
+          </div>
+
+          <div class="option-box">
+            <label>Toggles & Metadata</label>
+            <div class="checkbox-row">
+              <label><input type="checkbox" id="chkThumb" checked> Embed Thumbnail</label>
+              <label><input type="checkbox" id="chkMeta" checked> Embed Metadata</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button id="btnStartDownload" class="action-btn glow-btn">
+             START DOWNLOAD
+          </button>
+          <button id="btnCancelDownload" class="action-btn danger-btn" disabled>
+            ✕ CANCEL
+          </button>
+        </div>
+
+        <!-- Progress Gauge -->
+        <div class="progress-section">
+          <div class="progress-labels">
+            <span id="progStatus">Ready for mission</span>
+            <span id="progSpeed">Speed: 0.00 MiB/s | ETA: --:--</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: YTMEDIA PLAYER & LIBRARY -->
+    <section id="tab-player" class="tab-content">
+      <div class="player-layout">
+        <!-- Main Player -->
+        <div class="player-container glass-card">
+          <div class="video-viewport">
+            <video id="mainVideo" controls></video>
+            <div class="no-video-overlay" id="noVideoMsg">
+              <div class="big-play-btn">▶</div>
+              <p>Select any downloaded video or audio from the library below</p>
+            </div>
+          </div>
+
+          <!-- YouTube-Style Advanced Player Controls -->
+          <div class="yt-controls-bar">
+            <div class="track-info">
+              <h3 id="currentPlayingTitle">No Media Loaded</h3>
+              <span id="currentPlayingSize">0.00 MB</span>
+            </div>
+
+            <div class="yt-actions">
+              <div class="speed-control">
+                <label>Speed:</label>
+                <select id="selSpeed">
+                  <option value="0.25">0.25x</option>
+                  <option value="0.5">0.5x</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1.0" selected>1.0x (Normal)</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2.0">2.0x</option>
+                </select>
+              </div>
+
+              <button id="btnFullscreen" class="player-btn">⛶ Fullscreen</button>
+              <button id="btnCopyEmbed" class="player-btn">🔗 Copy Embed Code</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Downloaded Media Library -->
+        <div class="library-container glass-card">
+          <div class="library-header">
+            <h2>Downloaded Media Library</h2>
+            <button id="btnRefreshLibrary" class="action-btn secondary small">🔄 Refresh</button>
+          </div>
+          <div class="file-list" id="fileList">
+            <p class="loading-text">Loading media files...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: 10,000 PRESET MATRIX -->
+    <section id="tab-matrix" class="tab-content">
+      <div class="glass-card">
+        <div class="matrix-header">
+          <h2>10,000 Action Presets & Macro Matrix</h2>
+          <p>Real-time parameter injector with 10,000 discrete format, bitrate, channel filter, and codec configurations.</p>
+          <div class="matrix-stats">
+            <span>Total Macro Nodes: <strong>10,000</strong></span>
+            <span>Active Click Stats: <strong id="matrixClickCount">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Search / Filter across 10k buttons -->
+        <div class="matrix-toolbar">
+          <input type="text" id="matrixSearch" placeholder="Filter 10,000 buttons (e.g. 4K, FLAC, AV1, 60fps, Opus)...">
+          <div class="cat-tags">
+            <button class="cat-pill active" data-cat="all">All (10,000)</button>
+            <button class="cat-pill" data-cat="resolution">Resolutions</button>
+            <button class="cat-pill" data-cat="audio">Audio Master</button>
+            <button class="cat-pill" data-cat="codec">Codecs</button>
+            <button class="cat-pill" data-cat="channel">Channel Limits</button>
+          </div>
+        </div>
+
+        <div class="virtual-matrix-grid" id="matrixGrid">
+          <!-- Rendered dynamically with virtual optimization -->
+        </div>
+
+        <div class="active-macro-box">
+          <label>Active Macro Payload:</label>
+          <code id="activeMacroCode">--no-playlist -f "bv*+ba/b" --embed-thumbnail</code>
+          <button id="btnInjectMacro" class="action-btn small glow-btn">Inject into Downloader</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LIVE TERMINAL -->
+    <section id="tab-terminal" class="tab-content">
+      <div class="glass-card terminal-card">
+        <div class="terminal-header">
+          <div class="traffic-lights">
+            <span class="red"></span><span class="yellow"></span><span class="green"></span>
+          </div>
+          <span>yt-dlp Core Engine Process Terminal</span>
+          <button id="btnClearLogs" class="action-btn small secondary">Clear Screen</button>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <p class="term-line prompt">[SYSTEM] YouTube Studio Node Backend Connected.</p>
+          <p class="term-line info">[READY] Awaiting multimedia download instructions...</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
